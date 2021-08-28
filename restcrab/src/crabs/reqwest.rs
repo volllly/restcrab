@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use snafu::{ResultExt, ensure};
+
 pub struct Options {
   pub base_url: http::Uri,
 }
@@ -82,66 +84,62 @@ impl crate::Restcrab for Reqwest {
       req_builder = req_builder.header(key, value);
     }
     if let Some(body) = &request.body {
-      req_builder = req_builder.body(serde_json::to_string(body).map_err(|source| Error::SerializingBody { source })?);
+      req_builder = req_builder.body(serde_json::to_string(body).context(SerializingBody)?);
     }
 
-    let response = req_builder.send()?;
+    let response = req_builder.send().context(SendingRequest)?;
 
-    if !response.status().is_success() {
-      return Err(Error::UnsuccessfulResponseCode { response });
-    }
+    ensure!(response.status().is_success(), UnsuccessfulResponseCode { response });
 
-    let text = response.text().map_err(|source| Error::DecodingResponseBody { source })?;
+    let text = response.text().context(DecodingResponseBody)?;
 
     if !text.is_empty() {
-      serde_json::from_str::<RES>(text.as_str()).map(Some).map_err(|source| Error::DeserializingBody { source })
+      serde_json::from_str::<RES>(text.as_str()).map(Some).context(DeserializingBody)
     } else {
       Ok(None)
     }
   }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, snafu::Snafu)]
 pub enum Error {
-  #[error("Error parsing url: {source}")]
-  ParseingUrl {
-    #[from]
+  #[snafu(display("Error parsing url: {}", source), context(false))]
+  ParsingUrl {
     source: http::uri::InvalidUriParts
   },
-  #[error("Error serializing body: {source}")]
+
+  #[snafu(display("Error serializing body: {}", source))]
   SerializingBody {
     source: serde_json::Error
   },
-  #[error("Error deserializing body: {source}")]
+
+  #[snafu(display("Error deserializing body: {}", source))]
   DeserializingBody {
     source: serde_json::Error
   },
-  #[error("Error sending request: {source}")]
+  
+  #[snafu(display("Error sending request: {}", source))]
   SendingRequest {
-    #[from]
     source: reqwest_lib::Error
   },
-  #[error("Unsuccessful response code: {response:?}")]
+  
+  #[snafu(display("Unsuccessful response code: {:?}", response))]
   UnsuccessfulResponseCode {
     response: reqwest_lib::blocking::Response
   },
-  #[error("Error converting response body to text: {source}")]
+  
+  #[snafu(display("Error converting response body to text: {}", source))]
   DecodingResponseBody {
     source: reqwest_lib::Error
   },
-  #[error("Error converting response body to correct type: {source}")]
-  SettingResponseBody {
-    #[from]
-    source: http::Error
-  },
-  #[error("Invalid method: {method}")]
+  
+  #[snafu(display("Invalid method: {}", method))]
   InvalidMethod {
     method: http::Method
   },
-  #[error("Error constructing url: {source}")]
+  
+  #[snafu(display("Error constructing url: {}", source))]
   ConstructingUrl {
     source: http::uri::InvalidUri
   }
 }
-
-impl crate::InnerError for Error {}

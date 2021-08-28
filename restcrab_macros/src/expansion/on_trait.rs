@@ -23,8 +23,11 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         syn::ReturnType::Default => &default_type,
         syn::ReturnType::Type(_, return_type) => return_type
       };
-      method.sig.output = parse_quote!(-> ::std::result::Result<#output, Self::Error>);
-      method.sig.generics.where_clause = parse_quote!(where <Self as ::restcrab::Restcrab>::Error: ::std::convert::From<::http::Error>);
+      method.sig.output = parse_quote!(-> ::std::result::Result<#output, ::restcrab::Error<<#crab_name as ::restcrab::Restcrab>::Error>>);
+      method.sig.generics.where_clause = parse_quote! {
+        where
+          ::restcrab::Error<<#crab_name as ::restcrab::Restcrab>::Error>: ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>
+      };
       method.attrs = vec![];
       method.default = Some(expanded);
     }
@@ -54,13 +57,11 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
 
         let response = self.__restcrab.call(request)?;
         if expect_body {
-          if !response.is_some() {
+          if response.is_none() {
             return Err(::restcrab::Error::EmptyBody);
           }
-        } else {
-          if !response.is_none() {
-            return Err(::restcrab::Error::NoEmptyBody);
-          }
+        } else if response.is_some() {
+          return Err(::restcrab::Error::NoEmptyBody);
         }
 
         Ok(response)

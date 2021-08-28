@@ -78,3 +78,26 @@ async fn reqwest_crab() {
   headers.insert("test".to_string(), "header".to_string());
   client.get(headers).unwrap();
 }
+
+#[restcrab::restcrab(crab = "Reqwest")]
+trait WrongCrab {
+  #[restcrab(method = "POST", uri = "/echo", header("Content-Type", "application/json"))]
+  fn echo(#[restcrab(body)] body: String);
+
+  #[restcrab(method = "GET", uri = "/get", header("Content-Type", "application/json"))]
+  fn get(#[restcrab(headers)] headers: HashMap<String, String>) -> String;
+}
+#[async_std::test]
+async fn error_messages() {
+  let mock_server = setup_mock_server().await;
+  let client = WrongCrabClient::from_options(Options { base_url: mock_server.uri().try_into().unwrap() });
+
+  let message: String = Faker.fake();
+  let response = client.echo(message);
+  println!("{}", response.err().unwrap());
+
+  let mut headers = HashMap::new();
+  headers.insert("test".to_string(), "header".to_string());
+  let response = client.get(headers);
+  println!("{}", response.err().unwrap());
+}

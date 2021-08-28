@@ -2,21 +2,24 @@ use std::collections::HashMap;
 
 pub use restcrab_macros::*;
 
-#[derive(Debug, thiserror::Error)]
-pub enum Error<T: InnerError> {
-  #[error("{0}")]
-  Crab(#[from] T),
-  #[error("{0}")]
-  Http(#[from] http::Error),
-  #[error("Empty response body")]
+#[derive(Debug, snafu::Snafu)]
+pub enum Error<T: std::error::Error + std::fmt::Debug + 'static> {
+  #[snafu(context(false))]
+  Crab {
+    source: T
+  },
+
+  // #[snafu(context(false))]
+  // Http {
+  //   source: http::Error
+  // },
+
+  #[snafu(display("Empty response body"))]
   EmptyBody,
-  #[error("Expected empty response body")]
-  NoEmptyBody
+
+  #[snafu(display("Expected empty response body"))]
+  NoEmptyBody,
 }
-
-pub trait InnerError: std::error::Error + std::fmt::Debug + 'static {}
-
-impl<T: InnerError> InnerError for Error<T> {}
 
 pub struct Request<T> {
   pub method: http::Method,
@@ -27,7 +30,7 @@ pub struct Request<T> {
 }
 
 pub trait Restcrab {
-  type Error: InnerError;
+  type Error: std::error::Error + std::fmt::Debug + 'static + Send + Sync;
   type Options;
   type Crab: Restcrab;
   

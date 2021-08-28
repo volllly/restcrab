@@ -11,14 +11,14 @@ documentation = "https://docs.rs/restcrab/"
 
 [features]
 default = [ "reqwest" ]
-reqwest = [ "reqwest_lib", "thiserror", "serde_json" ]
+reqwest = [ "reqwest_lib", "serde_json" ]
 
 [dependencies]
 restcrab_macros = { path = "../restcrab_macros", version = "0.1" }
 serde = "1.0"
 http = "0.2"
 reqwest_lib = { package = "reqwest", version = "0.11", features = [ "blocking" ], optional = true }
-thiserror = { version = "1", optional = true }
+snafu = "0.6"
 serde_json = { version = "1", optional = true }
 
 [dev-dependencies]
