@@ -23,10 +23,10 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         syn::ReturnType::Default => &default_type,
         syn::ReturnType::Type(_, return_type) => return_type
       };
-      method.sig.output = parse_quote!(-> ::std::result::Result<#output, ::restcrab::Error<<#crab_name as ::restcrab::Restcrab>::Error>>);
+      method.sig.output = parse_quote!(-> ::std::result::Result<#output, <#crab_name as ::restcrab::Restcrab>::Error>);
       method.sig.generics.where_clause = parse_quote! {
         where
-          ::restcrab::Error<<#crab_name as ::restcrab::Restcrab>::Error>: ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>
+          <#crab_name as ::restcrab::Restcrab>::Error: ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>
       };
       method.attrs = vec![];
       method.default = Some(expanded);
@@ -48,7 +48,7 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
     }
 
     impl ::restcrab::Restcrab for #struct_name {
-      type Error = ::restcrab::Error<<#crab_name as ::restcrab::Restcrab>::Error>;
+      type Error = <#crab_name as ::restcrab::Restcrab>::Error;
       type Options = <#crab_name as ::restcrab::Restcrab>::Options;
       type Crab = #crab_name;
       
@@ -58,10 +58,10 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         let response = self.__restcrab.call(request)?;
         if expect_body {
           if response.is_none() {
-            return Err(::restcrab::Error::EmptyBody);
+            Err(::restcrab::Error::EmptyBody)?;
           }
         } else if response.is_some() {
-          return Err(::restcrab::Error::NoEmptyBody);
+          Err(::restcrab::Error::NoEmptyBody)?;
         }
 
         Ok(response)

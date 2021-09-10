@@ -141,5 +141,10 @@ pub enum Error {
   #[snafu(display("Error constructing url: {}", source))]
   ConstructingUrl {
     source: http::uri::InvalidUri
-  }
+  },
+
+  #[snafu(context(false))]
+  Restcrab {
+    source: crate::Error
+  },
 }

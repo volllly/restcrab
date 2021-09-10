@@ -3,12 +3,7 @@ use std::collections::HashMap;
 pub use restcrab_macros::*;
 
 #[derive(Debug, snafu::Snafu)]
-pub enum Error<T: std::error::Error + std::fmt::Debug + 'static> {
-  #[snafu(context(false))]
-  Crab {
-    source: T
-  },
-
+pub enum Error {
   #[snafu(display("Empty response body"))]
   EmptyBody,
 
