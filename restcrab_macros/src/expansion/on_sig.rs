@@ -166,7 +166,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
       .as_str()
       .parse()
       .map_err(|err| darling::Error::custom(format!("could not parse method: {}", err)).with_span(input).write_errors())?;
-    quote! { ::http::Method::#method }
+    quote! { ::restcrab::http::Method::#method }
   };
   
   let body_content = if let Some(body) = body {
@@ -206,7 +206,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     let call = quote!{
       self.call::<#request_type, #response_type>(::restcrab::Request {
         method: #method_content,
-        url: #uri_content.parse::<::http::Uri>().unwrap(),
+        url: #uri_content.parse::<::restcrab::http::Uri>().unwrap(),
         headers: __headers,
         body: #body_content,
         expect_body: #expect_body

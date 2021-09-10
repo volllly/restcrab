@@ -3,7 +3,7 @@ use std::convert::TryInto;
 
 use wiremock::*;
 use wiremock::matchers::*;
-use restcrab::{Restcrab, crabs::reqwest::*};
+use restcrab::{restcrab, Restcrab, crabs::reqwest::*};
 use fake::{Fake, Faker};
 
 pub struct Responder<C: Fn(&Request) -> ResponseTemplate> {
@@ -79,7 +79,7 @@ async fn reqwest_crab() {
   client.get(headers).unwrap();
 }
 
-#[restcrab::restcrab(crab = "Reqwest")]
+#[restcrab(crab = "Reqwest")]
 trait WrongCrab {
   #[restcrab(method = "POST", uri = "/echo", header("Content-Type", "application/json"))]
   fn echo(#[restcrab(body)] body: String);

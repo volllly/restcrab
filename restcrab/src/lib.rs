@@ -9,11 +9,6 @@ pub enum Error<T: std::error::Error + std::fmt::Debug + 'static> {
     source: T
   },
 
-  // #[snafu(context(false))]
-  // Http {
-  //   source: http::Error
-  // },
-
   #[snafu(display("Empty response body"))]
   EmptyBody,
 
@@ -41,3 +36,5 @@ pub trait Restcrab {
 }
 
 pub mod crabs;
+
+pub use http;
