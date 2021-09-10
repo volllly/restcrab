@@ -12,6 +12,42 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
   let trait_name = &input.ident;
   let struct_name = args.on.clone().unwrap_or_else(|| format_ident!("{}Client", original_trait.ident));
   let crab_name = &args.crab;
+  let empty_vec: Vec<syn::Meta> = vec![];
+  let crab_trait_attributes: Vec<TokenStream> = args.attributes
+    .as_ref()
+    .map(|attrs| &attrs.crab)
+    .unwrap_or(&empty_vec)
+    .iter()
+    .filter_map(|a| {
+      if let syn::Meta::List(list) = a {
+        if list.nested.len() != 1 {
+          None
+        } else {
+          Some(&list.nested[0])
+        }
+      } else {
+        None
+      }
+    })
+    .map(|n| quote!(#[#n])).collect();
+
+  let client_trait_attributes: Vec<TokenStream> = args.attributes
+    .as_ref()
+    .map(|attrs| &attrs.client)
+    .unwrap_or(&empty_vec)
+    .iter()
+    .filter_map(|a| {
+      if let syn::Meta::List(list) = a {
+        if list.nested.len() != 1 {
+          None
+        } else {
+          Some(&list.nested[0])
+        }
+      } else {
+        None
+      }
+    })
+    .map(|n| quote!(#[#n])).collect();
 
   for item in &mut input.items {
     if let syn::TraitItem::Method(method) = item {
@@ -61,6 +97,7 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
   Ok(quote! {
     #original_trait
 
+    #(#client_trait_attributes)*
     pub struct #struct_name {
       #[doc(hidden)]
       __restcrab: #crab_name
@@ -109,6 +146,7 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       }
     }
 
+    #(#crab_trait_attributes)*
     #input
 
     impl #trait_name for #struct_name {}

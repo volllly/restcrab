@@ -6,7 +6,7 @@ use restcrab::{crabs::reqwest::*, restcrab, Restcrab};
 fn on_trait() {
   #[restcrab(crab = "Reqwest")]
   trait Crab {
-    #[restcrab(method = "POST", uri = "/echo", header("Content-Type", "application/json"))]
+    #[restcrab(method = "POST", uri = "/echo", header("Content-Type", "application/json"), header("Content-Type", "application/json"))]
     fn echo(#[body] body: String) -> String;
 
     #[restcrab(method = "POST", uri = "/test", body = "test", header("Content-Type", "application/json"))]
