@@ -10,5 +10,5 @@ use on_sig::on_sig;
 pub struct Args {
   #[darling(default, rename = "struct")]
   pub on: Option<syn::Ident>,
-  pub crab: syn::Path
+  pub crab: syn::Path,
 }

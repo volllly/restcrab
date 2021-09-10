@@ -1,3 +1,4 @@
+use darling::FromMeta;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use syn::parse_quote;
@@ -5,8 +6,11 @@ use syn::parse_quote;
 pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenStream, TokenStream> {
   let errors: Vec<syn::Error> = vec![];
   let mut error_tokens = TokenStream::new();
+  let mut original_trait = input.clone();
+
+  input.ident = format_ident!("{}Crab", input.ident);
   let trait_name = &input.ident;
-  let struct_name = args.on.clone().unwrap_or_else(|| format_ident!("{}Client", trait_name));
+  let struct_name = args.on.clone().unwrap_or_else(|| format_ident!("{}Client", original_trait.ident));
   let crab_name = &args.crab;
 
   for item in &mut input.items {
@@ -14,21 +18,23 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       let expanded = match super::on_sig(&method.attrs, &mut method.sig) {
         Ok(expanded) => expanded,
         Err(err) => {
-          error_tokens = quote!{#error_tokens #err};
+          error_tokens = quote! {#error_tokens #err};
           continue;
         }
       };
       let default_type = parse_quote!(());
       let output: &syn::Type = match &method.sig.output {
         syn::ReturnType::Default => &default_type,
-        syn::ReturnType::Type(_, return_type) => return_type
+        syn::ReturnType::Type(_, return_type) => return_type,
       };
       method.sig.output = parse_quote!(-> ::std::result::Result<#output, <#crab_name as ::restcrab::Restcrab>::Error>);
       method.sig.generics.where_clause = parse_quote! {
         where
           <#crab_name as ::restcrab::Restcrab>::Error: ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>
       };
+
       method.attrs = vec![];
+
       method.default = Some(expanded);
     }
   }
@@ -36,12 +42,25 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
   input.supertraits = parse_quote!(::restcrab::Restcrab);
   input.attrs = vec![];
 
-
   if !errors.is_empty() {
     return Err(crate::to_syn_compile_errors(errors));
   }
 
+  for item in &mut original_trait.items {
+    if let syn::TraitItem::Method(method) = item {
+      method.attrs.retain(|a| a.path != syn::Path::from_string("restcrab").unwrap());
+      for parameter in &mut method.sig.inputs {
+        if let syn::FnArg::Typed(pat_type) = parameter {
+          pat_type.attrs.retain(|a| a.path != syn::Path::from_string("body").unwrap() && a.path != syn::Path::from_string("headers").unwrap());
+        }
+      }
+
+    }
+  }
+
   Ok(quote! {
+    #original_trait
+
     pub struct #struct_name {
       #[doc(hidden)]
       __restcrab: #crab_name
@@ -51,7 +70,7 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       type Error = <#crab_name as ::restcrab::Restcrab>::Error;
       type Options = <#crab_name as ::restcrab::Restcrab>::Options;
       type Crab = #crab_name;
-      
+
       fn call<REQ: ::serde::Serialize, RES: for<'de> ::serde::Deserialize<'de>>(&self, request: ::restcrab::Request<REQ>) -> Result<Option<RES>, Self::Error> {
         let expect_body = request.expect_body;
 
@@ -90,7 +109,6 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       }
     }
 
-      
     #input
 
     impl #trait_name for #struct_name {}

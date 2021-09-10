@@ -1,7 +1,7 @@
 use darling::FromMeta;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{AttributeArgs, ItemTrait, parse_macro_input};
+use syn::{parse_macro_input, AttributeArgs, ItemTrait};
 
 #[macro_use]
 mod helpers;
@@ -22,17 +22,18 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 #[proc_macro_attribute]
 pub fn restcrab(args: TokenStream, input: TokenStream) -> TokenStream {
   let args = parse_macro_input!(args as AttributeArgs);
-  
+
   let args_parsed = match expansion::Args::from_list(&args) {
     Ok(v) => v,
     Err(e) => {
       return TokenStream::from(e.write_errors());
     }
   };
-  
+
   // into_ok_or_err()
   match expansion::on_trait(&args_parsed, &mut parse_macro_input!(input as ItemTrait)) {
     Ok(ok) => ok,
-    Err(err) => err
-  }.into()
+    Err(err) => err,
+  }
+  .into()
 }

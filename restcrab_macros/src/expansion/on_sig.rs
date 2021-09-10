@@ -78,14 +78,14 @@ struct SigArgs {
   pub body: Option<String>,
 }
 
-#[derive(Debug, Default, FromMeta)]
-struct ParArgs {
-  #[darling(default)]
-  pub headers: bool,
+// #[derive(Debug, Default, FromMeta)]
+// struct ParArgs {
+//   #[darling(default)]
+//   pub headers: bool,
 
-  #[darling(default)]
-  pub body: bool,
-}
+//   #[darling(default)]
+//   pub body: bool,
+// }
 
 pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<syn::Block, TokenStream> {
   let mut darling_errors: Vec<darling::Error> = vec![];
@@ -102,19 +102,14 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
 
   for parameter in &mut input.inputs {
     if let syn::FnArg::Typed(pat_type) = parameter {
-      let par_args = if let Some(par_args) = pat_type
-        .attrs
-        .iter()
-        .find(|a| a.path == syn::Path::from_string("restcrab").unwrap())
-        .and_then(|a| Some(ok_or_push!(ParArgs::from_meta(&ok_or_push!(a.parse_meta(), syn_errors, return None)), darling_errors, return None)))
-      {
-        pat_type.attrs = vec![];
-        par_args
-      } else {
-        continue;
-      };
+      let has_header = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("headers").unwrap());
 
-      if par_args.headers {
+      let has_body = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("body").unwrap());
+
+      pat_type
+        .attrs = vec![];
+
+      if has_header {
         if headers.is_none() {
           headers = if let syn::Pat::Ident(ident) = pat_type.pat.as_ref() {
             Some(ident.ident.clone())
@@ -127,7 +122,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
         }
       }
 
-      if par_args.body {
+      if has_body {
         if body.is_none() {
           body = if let syn::Pat::Ident(ident) = pat_type.pat.as_ref() {
             Some((*pat_type.ty.clone(), ident.ident.clone()))
@@ -168,7 +163,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
       .map_err(|err| darling::Error::custom(format!("could not parse method: {}", err)).with_span(input).write_errors())?;
     quote! { ::restcrab::http::Method::#method }
   };
-  
+
   let body_content = if let Some(body) = body {
     let ident = body.1;
     quote! {Some(#ident)}
@@ -203,7 +198,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
   };
 
   let unwrap_response = {
-    let call = quote!{
+    let call = quote! {
       self.call::<#request_type, #response_type>(::restcrab::Request {
         method: #method_content,
         url: #uri_content.parse::<::restcrab::http::Uri>().unwrap(),
@@ -214,9 +209,9 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     };
 
     if expect_body {
-      quote!{ Ok(#call.unwrap()) }
+      quote! { Ok(#call.unwrap()) }
     } else {
-      quote!{ #call; Ok(()) }
+      quote! { #call; Ok(()) }
     }
   };
 

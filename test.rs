@@ -3,8 +3,8 @@
 use std::prelude::rust_2018::*;
 #[macro_use]
 extern crate std;
-use restcrab::{Restcrab, crabs::reqwest::*, restcrab};
 use std::{collections::HashMap, str::FromStr};
+use restcrab::{crabs::reqwest::*, restcrab, Restcrab};
 extern crate test;
 #[cfg(test)]
 #[rustc_test_marker]
@@ -67,7 +67,8 @@ fn on_trait() {
             body: String,
         ) -> ::std::result::Result<String, <Reqwest as ::restcrab::Restcrab>::Error>
         where
-            <Reqwest as ::restcrab::Restcrab>::Error: ::std::convert::From<::restcrab::Error>,
+            <Reqwest as ::restcrab::Restcrab>::Error:
+                ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>,
         {
             let mut __headers = ::std::collections::HashMap::<String, String>::new();
             __headers.insert("Content-Type".to_string(), "application/json".to_string());
@@ -86,7 +87,8 @@ fn on_trait() {
             headers: HashMap<String, String>,
         ) -> ::std::result::Result<String, <Reqwest as ::restcrab::Restcrab>::Error>
         where
-            <Reqwest as ::restcrab::Restcrab>::Error: ::std::convert::From<::restcrab::Error>,
+            <Reqwest as ::restcrab::Restcrab>::Error:
+                ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>,
         {
             let mut __headers = ::std::collections::HashMap::<String, String>::new();
             for (key, value) in headers {
@@ -108,7 +110,8 @@ fn on_trait() {
             headers: HashMap<String, String>,
         ) -> ::std::result::Result<(), <Reqwest as ::restcrab::Restcrab>::Error>
         where
-            <Reqwest as ::restcrab::Restcrab>::Error: ::std::convert::From<::restcrab::Error>,
+            <Reqwest as ::restcrab::Restcrab>::Error:
+                ::std::convert::From<<Self as ::restcrab::Restcrab>::Error>,
         {
             let mut __headers = ::std::collections::HashMap::<String, String>::new();
             for (key, value) in headers {
