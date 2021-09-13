@@ -1,6 +1,6 @@
 # Restcrab
 
-Restcrab provides a procedural macro [`restcrab`] and a trait [`Restcrab`] for generating a REST client from a trait definition.
+Restcrab provides a procedural macro [`restcrab`](crate::restcrab) and a trait [`Restcrab`](crate::Restcrab) for generating a REST client from a trait definition.
 
 ## Usage
 
@@ -70,7 +70,7 @@ fn main() {
 
 Because I like to use unhelpful terminology a backend for restcrab is called a crab.
 
-Types which implement the [`Restcrab`] trait can be used as crabs.
+Types which implement the [`Restcrab`](crate::Restcrab) trait can be used as crabs.
 
 The crate provides one crab which uses the [Reqwest](https://docs.rs/reqwest) http client.
 
