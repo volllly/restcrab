@@ -6,7 +6,7 @@ authors = [ "Paul Volavsek <paul.volavsek@gmail.com>" ]
 license = "MIT"
 description = "TODO"
 repository = "https://github.com/volllly/restcrab"
-readme = "README.md"
+readme = "../README.md"
 documentation = "https://docs.rs/restcrab/"
 
 [dependencies]
