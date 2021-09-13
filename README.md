@@ -1,4 +1,5 @@
 # Restcrab
+[![docs](https://docs.rs/restcrab/badge.svg)](https://docs.rs/restcrab/)
 
 Restcrab provides a procedural macro [`restcrab`](crate::restcrab) and a trait [`Restcrab`](crate::Restcrab) for generating a REST client from a trait definition.
 
@@ -34,7 +35,7 @@ trait Service {
   #[restcrab(method = "GET", uri = "/static_headers", header("Content-Type", "application/json"), header("User-Agen", "Restcrab"))]
   fn static_headers();
 
-  #[restcrab(method = "POST", uri = "/static_body", body = "{ \"id\": 0 }")]
+  #[restcrab(method = "POST", uri = "/static_body", body = "0")]
   fn static_body() -> String;
 
   #[restcrab(method = "POST", uri = "/dynamic_headers")]
@@ -74,4 +75,4 @@ Types which implement the [`Restcrab`](crate::Restcrab) trait can be used as cra
 
 The crate provides one crab which uses the [Reqwest](https://docs.rs/reqwest) http client.
 
-If you want to implement your own crab please look at the [provided implementation](restcrab::crabs::reqwest) as starting off point 
+If you want to implement your own crab please look at the [provided implementation](crate::crabs::reqwest) as starting off point 

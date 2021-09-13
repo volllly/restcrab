@@ -21,7 +21,7 @@ pub struct Request<T> {
 }
 
 pub trait Restcrab where Self: Sized {
-  type Error: std::error::Error + std::fmt::Debug + 'static + Send + Sync;
+  type Error: std::error::Error + std::fmt::Debug + From<Error> + 'static + Send + Sync;
   type Options;
   type Crab: Restcrab;
 
