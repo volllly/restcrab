@@ -18,7 +18,7 @@ http = "0.2"
 snafu = "0.6"
 
 [dev-dependencies]
-restcrab = { path = "../restcrab", version = "0.1", features = [ "reqwest" ] }
+restcrab = { path = "../restcrab", features = [ "reqwest" ] }
 serde = "1.0"
 
 [lib]
