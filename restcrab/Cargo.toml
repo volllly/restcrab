@@ -8,7 +8,7 @@ description = "Procedural macro to automatically generate a REST client from a t
 repository = "https://github.com/volllly/restcrab"
 readme = "../README.md"
 documentation = "https://docs.rs/restcrab/"
-keywords = ["rest", "restclient", "client", "derive", "macro", "serde"]
+keywords = ["rest", "restclient", "client", "macro", "serde"]
 
 [features]
 default = [ "reqwest" ]
