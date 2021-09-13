@@ -1,4 +1,4 @@
-#![doc = include_str!("../../README.md")]
+#![cfg_attr(docsrs, doc = include_str!("../../README.md"))]
 use std::collections::HashMap;
 
 pub use restcrab_macros::*;
