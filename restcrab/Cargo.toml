@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2018"
 authors = [ "Paul Volavsek <paul.volavsek@gmail.com>" ]
 license = "MIT"
-description = "TODO"
+description = "Procedural macro to automatically generate a REST client from a trait definition."
 repository = "https://github.com/volllly/restcrab"
-readme = "README.md"
+readme = "../README.md"
 documentation = "https://docs.rs/restcrab/"
+keywords = ["rest", "restclient", "client", "derive", "macro", "serde"]
 
 [features]
 default = [ "reqwest" ]

@@ -1,3 +1,4 @@
+#![doc = include_str!("../../README.md")]
 use std::collections::HashMap;
 
 pub use restcrab_macros::*;
@@ -19,13 +20,13 @@ pub struct Request<T> {
   pub expect_body: bool,
 }
 
-pub trait Restcrab {
+pub trait Restcrab where Self: Sized {
   type Error: std::error::Error + std::fmt::Debug + 'static + Send + Sync;
   type Options;
   type Crab: Restcrab;
 
   fn call<REQ: serde::Serialize, RES: for<'de> serde::Deserialize<'de>>(&self, request: Request<REQ>) -> Result<Option<RES>, Self::Error>;
-  fn from_options(options: Self::Options) -> Self;
+  fn from_options(options: Self::Options) -> Result<Self, Self::Error>;
   fn options(&self) -> &Self::Options;
   fn options_mut(&mut self) -> &mut Self::Options;
 }

@@ -58,7 +58,7 @@ trait Crab {
   #[restcrab(method = "POST", uri = "/test", body = "test", header("Content-Type", "application/json"))]
   fn test(#[headers] headers: HashMap<String, String>) -> String;
 
-  #[restcrab(method = "GET", uri = "/get", header("Content-Type", "application/json"))]
+  #[restcrab(method = "GET", header("Content-Type", "application/json"))]
   fn get(#[headers] headers: HashMap<String, String>);
 }
 
@@ -67,7 +67,7 @@ async fn reqwest_crab() {
   let mock_server = setup_mock_server().await;
   let client = CrabClient::from_options(Options {
     base_url: mock_server.uri().try_into().unwrap(),
-  });
+  }).unwrap();
 
   let message: String = Faker.fake();
   let response = client.echo(message.clone()).unwrap();
@@ -96,7 +96,7 @@ async fn error_messages() {
   let mock_server = setup_mock_server().await;
   let client = WrongCrabClient::from_options(Options {
     base_url: mock_server.uri().try_into().unwrap(),
-  });
+  }).unwrap();
 
   let message: String = Faker.fake();
   let response = client.echo(message);

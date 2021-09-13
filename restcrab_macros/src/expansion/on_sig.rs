@@ -69,7 +69,8 @@ struct SigArgs {
   #[darling(default)]
   pub method: Method,
 
-  pub uri: Url,
+  #[darling(default)]
+  pub uri: Option<Url>,
 
   #[darling(multiple, default)]
   pub header: Vec<Header>,
@@ -152,7 +153,11 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     syn::ReturnType::Type(_, return_type) => (return_type, true),
   };
 
-  let uri_content = sig_args.uri.0.to_string();
+  let uri_content = if let Some(uri) = sig_args.uri {
+    uri.0.to_string()
+  } else {
+    format!("/{}", input.ident.to_string())
+  };
 
   let method_content = {
     let method: TokenStream = sig_args

@@ -123,10 +123,10 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         Ok(response)
       }
 
-      fn from_options(options: Self::Options) -> Self {
-        Self {
-          __restcrab: #crab_name::from_options(options)
-        }
+      fn from_options(options: Self::Options) -> Result<Self, Self::Error> {
+        Ok(Self {
+          __restcrab: #crab_name::from_options(options)?
+        })
       }
 
       fn options(&self) -> &Self::Options {

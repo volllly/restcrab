@@ -23,11 +23,11 @@ impl crate::Restcrab for Reqwest {
     &mut self.options
   }
 
-  fn from_options(options: Options) -> Reqwest {
-    Reqwest {
+  fn from_options(options: Options) -> Result<Reqwest, Error> {
+    Ok(Reqwest {
       options,
       client: reqwest_lib::blocking::Client::new(),
-    }
+    })
   }
 
   fn call<REQ: serde::Serialize, RES: for<'de> serde::Deserialize<'de>>(&self, request: crate::Request<REQ>) -> Result<Option<RES>, Self::Error> {
