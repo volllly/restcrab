@@ -1,5 +1,6 @@
 # Restcrab
-[![docs](https://docs.rs/restcrab/badge.svg)](https://docs.rs/restcrab/)
+[![crates.io](https://img.shields.io/crates/v/restcrab)](https://crates.io/crates/restcrab)
+[![docs.rs](https://docs.rs/restcrab/badge.svg)](https://docs.rs/restcrab/)
 
 Restcrab provides a procedural macro [`restcrab`](crate::restcrab) and a trait [`Restcrab`](crate::Restcrab) for generating a REST client from a trait definition.
 
