@@ -27,3 +27,7 @@ serde_json = { version = "1.0", optional = true }
 async-std = { version = "1.10", features = [ "attributes" ] }
 fake = "2.4.3"
 wiremock = "0.5.10"
+
+[lib]
+name = "restcrab"
+path = "src/lib.rs"
