@@ -67,7 +67,8 @@ async fn reqwest_crab() {
   let mock_server = setup_mock_server().await;
   let client = CrabClient::from_options(Options {
     base_url: mock_server.uri().try_into().unwrap(),
-  }).unwrap();
+  })
+  .unwrap();
 
   let message: String = Faker.fake();
   let response = client.echo(message.clone()).unwrap();
@@ -96,7 +97,8 @@ async fn error_messages() {
   let mock_server = setup_mock_server().await;
   let client = WrongCrabClient::from_options(Options {
     base_url: mock_server.uri().try_into().unwrap(),
-  }).unwrap();
+  })
+  .unwrap();
 
   let message: String = Faker.fake();
   let response = client.echo(message);

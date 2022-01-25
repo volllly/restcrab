@@ -18,9 +18,13 @@ fn on_trait() {
 
   CrabClient::from_options(Options {
     base_url: http::Uri::from_str("localhost").unwrap(),
-  }).unwrap();
+  })
+  .unwrap();
 
-  CrabClient::from_crab(Reqwest::from_options(Options {
-    base_url: http::Uri::from_str("localhost").unwrap(),
-  }).unwrap());
+  CrabClient::from_crab(
+    Reqwest::from_options(Options {
+      base_url: http::Uri::from_str("localhost").unwrap(),
+    })
+    .unwrap(),
+  );
 }

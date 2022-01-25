@@ -20,7 +20,10 @@ pub struct Request<T> {
   pub expect_body: bool,
 }
 
-pub trait Restcrab where Self: Sized {
+pub trait Restcrab
+where
+  Self: Sized,
+{
   type Error: std::error::Error + std::fmt::Debug + From<Error> + 'static + Send + Sync;
   type Options;
   type Crab: Restcrab;

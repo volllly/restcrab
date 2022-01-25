@@ -107,8 +107,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
 
       let has_body = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("body").unwrap());
 
-      pat_type
-        .attrs = vec![];
+      pat_type.attrs = vec![];
 
       if has_header {
         if headers.is_none() {
@@ -153,11 +152,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     syn::ReturnType::Type(_, return_type) => (return_type, true),
   };
 
-  let uri_content = if let Some(uri) = sig_args.uri {
-    uri.0.to_string()
-  } else {
-    format!("/{}", input.ident)
-  };
+  let uri_content = if let Some(uri) = sig_args.uri { uri.0.to_string() } else { format!("/{}", input.ident) };
 
   let method_content = {
     let method: TokenStream = sig_args

@@ -13,7 +13,8 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
   let struct_name = args.on.clone().unwrap_or_else(|| format_ident!("{}Client", original_trait.ident));
   let crab_name = &args.crab;
   let empty_vec: Vec<syn::Meta> = vec![];
-  let crab_trait_attributes: Vec<TokenStream> = args.attributes
+  let crab_trait_attributes: Vec<TokenStream> = args
+    .attributes
     .as_ref()
     .map(|attrs| &attrs.crab)
     .unwrap_or(&empty_vec)
@@ -29,9 +30,11 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         None
       }
     })
-    .map(|n| quote!(#[#n])).collect();
+    .map(|n| quote!(#[#n]))
+    .collect();
 
-  let client_trait_attributes: Vec<TokenStream> = args.attributes
+  let client_trait_attributes: Vec<TokenStream> = args
+    .attributes
     .as_ref()
     .map(|attrs| &attrs.client)
     .unwrap_or(&empty_vec)
@@ -47,7 +50,8 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
         None
       }
     })
-    .map(|n| quote!(#[#n])).collect();
+    .map(|n| quote!(#[#n]))
+    .collect();
 
   for item in &mut input.items {
     if let syn::TraitItem::Method(method) = item {
@@ -87,10 +91,11 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       method.attrs.retain(|a| a.path != syn::Path::from_string("restcrab").unwrap());
       for parameter in &mut method.sig.inputs {
         if let syn::FnArg::Typed(pat_type) = parameter {
-          pat_type.attrs.retain(|a| a.path != syn::Path::from_string("body").unwrap() && a.path != syn::Path::from_string("headers").unwrap());
+          pat_type
+            .attrs
+            .retain(|a| a.path != syn::Path::from_string("body").unwrap() && a.path != syn::Path::from_string("headers").unwrap());
         }
       }
-
     }
   }
 
