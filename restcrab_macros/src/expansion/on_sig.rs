@@ -156,7 +156,7 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
   let uri_content = if let Some(uri) = sig_args.uri {
     uri.0.to_string()
   } else {
-    format!("/{}", input.ident.to_string())
+    format!("/{}", input.ident)
   };
 
   let method_content = {

@@ -1160,7 +1160,7 @@ dependencies = [
 
 [[package]]
 name = "restcrab"
-version = "0.1.2"
+version = "0.1.1"
 dependencies = [
  "async-std",
  "fake",
@@ -1175,14 +1175,12 @@ dependencies = [
 
 [[package]]
 name = "restcrab_macros"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "darling",
  "http",
  "proc-macro2",
  "quote",
- "restcrab",
- "serde",
  "snafu",
  "syn",
 ]

@@ -1,7 +1,7 @@
 [package]
 name = "restcrab_macros"
-version = "0.1.0"
-edition = "2018"
+version = "0.1.1"
+edition = "2021"
 authors = [ "Paul Volavsek <paul.volavsek@gmail.com>" ]
 license = "MIT"
 description = "TODO"
@@ -16,11 +16,11 @@ proc-macro2 = "1.0"
 quote = "1.0"
 syn = "1.0"
 http = "0.2"
-snafu = "0.6"
+snafu = "0.7"
 
 [dev-dependencies]
 restcrab = { path = "../restcrab", features = [ "reqwest" ] }
-serde = "1.0"
+serde = { version = "1.0", features = [ "derive" ] }
 
 [lib]
 proc-macro = true
