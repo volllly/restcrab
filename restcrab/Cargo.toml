@@ -9,7 +9,6 @@ repository = "https://github.com/volllly/restcrab"
 readme = "../README.md"
 documentation = "https://docs.rs/restcrab/"
 keywords = ["rest", "restclient", "client", "macro", "serde"]
-include = [ "../README.md" ]
 
 [features]
 default = [ "reqwest" ]
