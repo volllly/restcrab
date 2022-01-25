@@ -6,7 +6,6 @@ authors = [ "Paul Volavsek <paul.volavsek@gmail.com>" ]
 license = "MIT"
 description = "Macros for the restcrab crate"
 repository = "https://github.com/volllly/restcrab"
-readme = "../README.md"
 documentation = "https://docs.rs/restcrab/"
 
 [dependencies]

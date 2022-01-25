@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2022-01-25
+### Changed
+- Update dependencies
+- Use rust 2021
+
 ## [0.1.1] - 2021-09-16
 ### Added
 - Add changelog
@@ -17,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial implementation
 
-[Unreleased]: https://github.com/volllly/restcrab/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/volllly/restcrab/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/volllly/restcrab/releases/tag/v0.1.2
 [0.1.1]: https://github.com/volllly/restcrab/releases/tag/v0.1.1
 [0.1.0]: https://github.com/volllly/restcrab/releases/tag/v0.1.0
