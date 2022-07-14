@@ -3,6 +3,7 @@ use std::str::FromStr;
 use darling::FromMeta;
 use proc_macro2::TokenStream;
 use quote::quote;
+use regex::Regex;
 use syn::parse_quote;
 
 #[derive(Debug)]
@@ -96,15 +97,25 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
 
   let mut headers: Option<syn::Ident> = None;
   let mut queries: Option<syn::Ident> = None;
+  let mut parameters: Vec<syn::Ident> = vec![];
   let mut body: Option<(syn::Type, syn::Ident)> = None;
 
   for parameter in &mut input.inputs {
     if let syn::FnArg::Typed(pat_type) = parameter {
       let has_header = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("headers").unwrap());
       let has_query = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("queries").unwrap());
+      let has_parameter = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("parameter").unwrap());
       let has_body = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("body").unwrap());
 
       pat_type.attrs = vec![];
+
+      if has_parameter {
+        if let syn::Pat::Ident(ident) = pat_type.pat.as_ref() {
+          parameters.push(ident.ident.clone());
+        } else {
+          darling_errors.push(darling::Error::custom(format!("Pattern {:?} is no identifier", pat_type.pat)).with_span(pat_type));
+        }
+      }
 
       if has_header {
         if headers.is_none() {
@@ -162,7 +173,22 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     syn::ReturnType::Type(_, return_type) => (return_type, true),
   };
 
-  let uri_content = if let Some(uri) = sig_args.uri { uri.0.to_string() } else { format!("/{}", input.ident) };
+  let uri_content = if let Some(uri) = sig_args.uri {
+    let uri_string = uri.0.to_string();
+    let re = Regex::new(r"\{(.*?)\}").unwrap();
+    let targets: Vec<Result<syn::Expr, (String, syn::Error)>> = re.captures_iter(&uri_string).map(|c| syn::parse_str(&c[1]).map_err(|err| (c[1].to_string(), err))).collect();
+    
+    for (expr, err) in targets.iter().filter_map(|r| r.as_ref().err()) {
+      darling_errors.push(darling::Error::custom(format!("Could not parse url parameter {:?} ({:?})", expr, err)).with_span(input));
+    }
+  
+    let targets = targets.iter().filter_map(|r| r.as_ref().ok());
+    let uri_string = re.replace(&uri_string, "{}");
+    quote! { format!(#uri_string, #( #targets ),*) }
+  } else {
+    let uri_string = format!("/{}", input.ident);
+    quote! { #uri_string }
+  };
 
   let method_content = {
     let method: TokenStream = sig_args
