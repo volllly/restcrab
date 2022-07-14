@@ -25,7 +25,7 @@ fn on_trait() {
     fn path_parameters(#[parameter] test: String);
   }
 
-CrabClient::from_options(Options {
+  CrabClient::from_options(Options {
     base_url: http::Uri::from_str("localhost").unwrap(),
   })
   .unwrap();

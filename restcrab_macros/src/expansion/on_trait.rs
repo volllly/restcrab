@@ -91,9 +91,12 @@ pub fn on_trait(args: &super::Args, input: &mut syn::ItemTrait) -> Result<TokenS
       method.attrs.retain(|a| a.path != syn::Path::from_string("restcrab").unwrap());
       for parameter in &mut method.sig.inputs {
         if let syn::FnArg::Typed(pat_type) = parameter {
-          pat_type
-            .attrs
-            .retain(|a| a.path != syn::Path::from_string("body").unwrap() && a.path != syn::Path::from_string("headers").unwrap() && a.path != syn::Path::from_string("queries").unwrap() && a.path != syn::Path::from_string("parameter").unwrap());
+          pat_type.attrs.retain(|a| {
+            a.path != syn::Path::from_string("body").unwrap()
+              && a.path != syn::Path::from_string("headers").unwrap()
+              && a.path != syn::Path::from_string("queries").unwrap()
+              && a.path != syn::Path::from_string("parameter").unwrap()
+          });
         }
       }
     }

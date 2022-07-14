@@ -39,7 +39,10 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 /// Attributes can be added to the generated struct like this.
 /// ```
 /// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
-/// #[restcrab(crab = "Reqwest", attributes(client(cfg(not(feature = "some-feature")))))]
+/// #[restcrab(
+///   crab = "Reqwest",
+///   attributes(client(cfg(not(feature = "some-feature"))))
+/// )]
 /// trait Service {}
 /// ```
 /// This adds the attribute `#[cfg(not(feature = "some-feature"))]` to the generated struct.
@@ -64,6 +67,19 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 /// }
 /// ```
 /// Without the `uri` parameter the method name is used as `uri`.
+///
+/// ## Add parameters to request url
+/// ```
+/// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
+/// # use serde::Serialize;
+/// #[derive(Serialize)]
+/// struct Request {}
+/// #[restcrab(crab = "Reqwest")]
+/// trait Service {
+///   #[restcrab(method = "GET", uri = "/url/{name}")]
+///   fn method(#[parameter] name: &str);
+/// }
+/// ```
 ///
 /// ## Add return type
 /// ```
@@ -90,6 +106,19 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 /// ```
 /// The `header` field can be added multiple times to the attribute.
 ///
+/// ## Add static query parameters to request
+/// ```
+/// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
+/// # use serde::Serialize;
+/// #[derive(Serialize)]
+/// struct Request {}
+/// #[restcrab(crab = "Reqwest")]
+/// trait Service {
+///   #[restcrab(method = "GET", query("key", "value"))]
+///   fn method();
+/// }
+/// ```
+///
 /// ## Add static body to request
 /// ```
 /// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
@@ -112,6 +141,18 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 /// ```
 /// Can be combined with static headers.
 ///
+/// ## Add dynamic query parameters to request
+/// ```
+/// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
+/// # use std::collections::HashMap;
+/// #[restcrab(crab = "Reqwest")]
+/// trait Service {
+///   #[restcrab(method = "GET", query("key", "value"))]
+///   fn method(#[queries] headers: HashMap<String, String>);
+/// }
+/// ```
+/// Can be combined with static query parameters.
+///
 /// ## Add dynamic body to request
 /// ```
 /// # use restcrab::{restcrab, crabs::reqwest::Reqwest};
@@ -124,6 +165,7 @@ fn to_darling_compile_errors(errors: Vec<darling::Error>) -> proc_macro2::TokenS
 ///   fn method(#[body] body: Request);
 /// }
 /// ```
+
 #[proc_macro_attribute]
 pub fn restcrab(args: TokenStream, input: TokenStream) -> TokenStream {
   let args = parse_macro_input!(args as AttributeArgs);
