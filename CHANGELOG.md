@@ -14,11 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for url parameters
 
 ## [0.1.2] - 2022-01-25
+
 ### Changed
 - Update dependencies
 - Use rust 2021
 
 ## [0.1.1] - 2021-09-16
+
 ### Added
 - Add changelog
 
@@ -26,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed readme not showing up on [docs.rs/restcrab](docs.rs/restcrab)
 
 ## [0.1.0] - 2021-09-13
+
 ### Added
 - Initial implementation
 
