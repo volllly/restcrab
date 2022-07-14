@@ -34,6 +34,8 @@ impl FromMeta for Method {
 #[derive(Debug, Default)]
 struct Header(String, String);
 
+type Query = Header;
+
 impl FromMeta for Header {
   fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
     let mut key: Option<String> = None;
@@ -75,18 +77,12 @@ struct SigArgs {
   #[darling(multiple, default)]
   pub header: Vec<Header>,
 
+  #[darling(multiple, default)]
+  pub query: Vec<Query>,
+
   #[darling(default)]
   pub body: Option<String>,
 }
-
-// #[derive(Debug, Default, FromMeta)]
-// struct ParArgs {
-//   #[darling(default)]
-//   pub headers: bool,
-
-//   #[darling(default)]
-//   pub body: bool,
-// }
 
 pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<syn::Block, TokenStream> {
   let mut darling_errors: Vec<darling::Error> = vec![];
@@ -99,12 +95,13 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     .ok_or_else(|| darling::Error::custom(format!("Attribute not provided on fn {}", input.ident)).with_span(input).write_errors())?;
 
   let mut headers: Option<syn::Ident> = None;
+  let mut queries: Option<syn::Ident> = None;
   let mut body: Option<(syn::Type, syn::Ident)> = None;
 
   for parameter in &mut input.inputs {
     if let syn::FnArg::Typed(pat_type) = parameter {
       let has_header = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("headers").unwrap());
-
+      let has_query = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("queries").unwrap());
       let has_body = pat_type.attrs.iter().any(|a| a.path == syn::Path::from_string("body").unwrap());
 
       pat_type.attrs = vec![];
@@ -119,6 +116,19 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
           };
         } else {
           darling_errors.push(darling::Error::custom("headers attr was already set".to_string()).with_span(pat_type));
+        }
+      }
+
+      if has_query {
+        if queries.is_none() {
+          queries = if let syn::Pat::Ident(ident) = pat_type.pat.as_ref() {
+            Some(ident.ident.clone())
+          } else {
+            darling_errors.push(darling::Error::custom(format!("Pattern {:?} is no identifier", pat_type.pat)).with_span(pat_type));
+            None
+          };
+        } else {
+          darling_errors.push(darling::Error::custom("queries attr was already set".to_string()).with_span(pat_type));
         }
       }
 
@@ -197,12 +207,36 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     }
   };
 
+  let queries_content1 = if let Some(queries) = queries {
+    let ident = queries;
+    quote! {
+      for (key, value) in #ident {
+        __queries.insert(key, value);
+      }
+    }
+  } else {
+    TokenStream::new()
+  };
+
+  let queries_content2 = {
+    let mut content: Vec<TokenStream> = vec![];
+    for query in sig_args.query {
+      let key = query.0;
+      let value = query.1;
+      content.push(quote! {__queries.insert(#key.to_string(), #value.to_string());});
+    }
+    quote! {
+      #(#content)*
+    }
+  };
+
   let unwrap_response = {
     let call = quote! {
       self.call::<#request_type, #response_type>(::restcrab::Request {
         method: #method_content,
         url: #uri_content.parse::<::restcrab::http::Uri>().unwrap(),
         headers: __headers,
+        queries: __queries,
         body: #body_content,
         expect_body: #expect_body
       })?
@@ -220,6 +254,10 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
       let mut __headers = ::std::collections::HashMap::<String, String>::new();
       #headers_content1;
       #headers_content2;
+
+      let mut __queries = ::std::collections::HashMap::<String, String>::new();
+      #queries_content1;
+      #queries_content2;
 
       #unwrap_response
     }

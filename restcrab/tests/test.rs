@@ -47,6 +47,23 @@ async fn setup_mock_server() -> MockServer {
     .mount(&mock_server)
     .await;
 
+  Mock::given(method("PUT"))
+    .and(path("/put"))
+    .and(query_param("test", "value"))
+    .and(query_param("test2", "value2"))
+    .respond_with(ResponseTemplate::new(200))
+    .mount(&mock_server)
+    .await;
+
+  Mock::given(method("DELETE"))
+    .and(path("/delete"))
+    .and(query_param("test", "value"))
+    .and(query_param("test3", "value3"))
+    .and(query_param("test4", "value4"))
+    .respond_with(ResponseTemplate::new(200))
+    .mount(&mock_server)
+    .await;
+
   mock_server
 }
 
@@ -60,6 +77,12 @@ trait Crab {
 
   #[restcrab(method = "GET", header("Content-Type", "application/json"))]
   fn get(#[headers] headers: HashMap<String, String>);
+  
+  #[restcrab(method = "PUT", uri = "/put", query("test", "value"), query("test2", "value2"))]
+  fn static_query();
+
+  #[restcrab(method = "DELETE", uri = "/delete", query("test", "value"))]
+  fn dynamic_query(#[queries] headers: HashMap<String, String>);
 }
 
 #[async_std::test]
@@ -82,6 +105,14 @@ async fn reqwest_crab() {
   let mut headers = HashMap::new();
   headers.insert("test".to_string(), "header".to_string());
   client.get(headers).unwrap();
+
+  client.static_query().unwrap();
+
+  let mut queries = HashMap::new();
+  queries.insert("test".to_string(), "value".to_string());
+  queries.insert("test3".to_string(), "value3".to_string());
+  queries.insert("test4".to_string(), "value4".to_string());
+  client.dynamic_query(queries).unwrap();
 }
 
 #[restcrab(crab = "Reqwest")]
