@@ -28,7 +28,7 @@ trait Service {
   fn uri_from_attribute();
 
   #[restcrab(method = "GET", uri = "/empty/{name}")]
-  fn uri_from_attribute_with_parameter(#[parameter] name: &str);
+  fn uri_with_parameter(#[parameter] name: &str);
 
   #[restcrab(method = "GET")]
   fn uri_from_method_name();
@@ -40,7 +40,7 @@ trait Service {
   fn static_headers();
 
   #[restcrab(method = "GET", uri = "/static_query", query("some", "query"), query("another", "one"))]
-  fn static_query();
+  fn static_queries();
 
   #[restcrab(method = "POST", uri = "/static_body", body = "0")]
   fn static_body() -> String;
@@ -64,14 +64,20 @@ fn main() {
   }).unwrap(); 
 
   let mut headers = HashMap::new();
-  headers.insert("User-Agen".to_string(), "Restcrab".to_string());
+  headers.insert("User-Agent".to_string(), "Restcrab".to_string());
+
+  let mut queries = HashMap::new();
+  queries.insert("key".to_string(), "value".to_string());
 
   let uri_from_attribute:   ()        = client.uri_from_attribute().unwrap();
   let uri_from_method_name: ()        = client.uri_from_method_name().unwrap();
+  let uri_with_parameter:   ()        = client.uri_with_parameter("value").unwrap();
   let static_header:        ()        = client.static_header().unwrap();
   let static_headers:       ()        = client.static_headers().unwrap();
+  let static_queries:       ()        = client.static_queries().unwrap();
   let static_body:          String    = client.static_body().unwrap();
   let dynamic_headers:      String    = client.dynamic_headers(headers.clone()).unwrap();
+  let dynamic_queries:      String    = client.dynamic_queries(queries).unwrap();
   let both_headers:         String    = client.both_headers(headers).unwrap();
   let dynamic_body:         Response  = client.dynamic_body(Request { id: 0 }).unwrap();
 }
