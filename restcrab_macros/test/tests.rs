@@ -20,9 +20,12 @@ fn on_trait() {
 
     #[restcrab(method = "DELETE", uri = "/delete")]
     fn dynamic_query(#[queries] queries: HashMap<String, String>);
+
+    #[restcrab(method = "GET", uri = "/{test}")]
+    fn path_parameters(#[parameter] test: String);
   }
 
-  CrabClient::from_options(Options {
+CrabClient::from_options(Options {
     base_url: http::Uri::from_str("localhost").unwrap(),
   })
   .unwrap();
