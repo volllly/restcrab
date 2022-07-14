@@ -14,6 +14,12 @@ fn on_trait() {
 
     #[restcrab(method = "GET", uri = "/get", header("Content-Type", "application/json"))]
     fn get(#[headers] headers: HashMap<String, String>);
+
+    #[restcrab(method = "PUT", uri = "/put", query("test", "value"), query("test2", "value2"))]
+    fn static_query();
+
+    #[restcrab(method = "DELETE", uri = "/delete")]
+    fn dynamic_query(#[queries] queries: HashMap<String, String>);
   }
 
   CrabClient::from_options(Options {

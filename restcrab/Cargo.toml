@@ -1,6 +1,6 @@
 [package]
 name = "restcrab"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 authors = [ "Paul Volavsek <paul.volavsek@gmail.com>" ]
 license = "MIT"
@@ -15,7 +15,7 @@ default = [ "reqwest" ]
 reqwest = [ "reqwest_lib", "serde_json" ]
 
 [dependencies]
-restcrab_macros = { path = "../restcrab_macros", version = "0.1" }
+restcrab_macros = { path = "../restcrab_macros", version = "0.2" }
 serde = "1.0"
 http = "0.2"
 reqwest_lib = { package = "reqwest", version = "0.11", features = [ "blocking" ], optional = true }

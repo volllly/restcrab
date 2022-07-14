@@ -16,6 +16,7 @@ pub struct Request<T> {
   pub method: http::Method,
   pub url: http::Uri,
   pub headers: HashMap<String, String>,
+  pub queries: HashMap<String, String>,
   pub body: Option<T>,
   pub expect_body: bool,
 }
