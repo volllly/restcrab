@@ -27,6 +27,9 @@ trait Service {
   #[restcrab(method = "GET", uri = "/empty")]
   fn uri_from_attribute();
 
+  #[restcrab(method = "GET", uri = "/empty/{name}")]
+  fn uri_from_attribute_with_parameter(#[parameter] name: &str);
+
   #[restcrab(method = "GET")]
   fn uri_from_method_name();
 
@@ -36,11 +39,17 @@ trait Service {
   #[restcrab(method = "GET", uri = "/static_headers", header("Content-Type", "application/json"), header("User-Agen", "Restcrab"))]
   fn static_headers();
 
+  #[restcrab(method = "GET", uri = "/static_query", query("some", "query"), query("another", "one"))]
+  fn static_query();
+
   #[restcrab(method = "POST", uri = "/static_body", body = "0")]
   fn static_body() -> String;
 
   #[restcrab(method = "POST", uri = "/dynamic_headers")]
   fn dynamic_headers(#[headers] headers: HashMap<String, String>) -> String;
+
+  #[restcrab(method = "POST", uri = "/dynamic_queries")]
+  fn dynamic_queries(#[queries] queries: HashMap<String, String>) -> String;
 
   #[restcrab(method = "POST", uri = "/dynamic_headers", header("Content-Type", "application/json"))]
   fn both_headers(#[headers] headers: HashMap<String, String>) -> String;

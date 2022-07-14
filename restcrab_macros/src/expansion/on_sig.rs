@@ -177,11 +177,11 @@ pub fn on_sig(attrs: &[syn::Attribute], input: &mut syn::Signature) -> Result<sy
     let uri_string = uri.0.to_string();
     let re = Regex::new(r"\{(.*?)\}").unwrap();
     let targets: Vec<Result<syn::Expr, (String, syn::Error)>> = re.captures_iter(&uri_string).map(|c| syn::parse_str(&c[1]).map_err(|err| (c[1].to_string(), err))).collect();
-    
+
     for (expr, err) in targets.iter().filter_map(|r| r.as_ref().err()) {
       darling_errors.push(darling::Error::custom(format!("Could not parse url parameter {:?} ({:?})", expr, err)).with_span(input));
     }
-  
+
     let targets = targets.iter().filter_map(|r| r.as_ref().ok());
     let uri_string = re.replace(&uri_string, "{}");
     quote! { format!(#uri_string, #( #targets ),*) }

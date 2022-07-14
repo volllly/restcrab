@@ -85,7 +85,7 @@ impl crate::Restcrab for Reqwest {
     }
 
     req_builder = req_builder.query(&request.queries.iter().collect::<Vec<_>>());
-    
+
     if let Some(body) = &request.body {
       req_builder = req_builder.body(serde_json::to_string(body).context(SerializingBodySnafu)?);
     }

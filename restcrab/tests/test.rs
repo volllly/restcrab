@@ -64,11 +64,7 @@ async fn setup_mock_server() -> MockServer {
     .mount(&mock_server)
     .await;
 
-  Mock::given(method("GET"))
-    .and(path("/parameter"))
-    .respond_with(ResponseTemplate::new(200))
-    .mount(&mock_server)
-    .await;
+  Mock::given(method("GET")).and(path("/parameter")).respond_with(ResponseTemplate::new(200)).mount(&mock_server).await;
 
   mock_server
 }
@@ -83,13 +79,13 @@ trait Crab {
 
   #[restcrab(method = "GET", header("Content-Type", "application/json"))]
   fn get(#[headers] headers: HashMap<String, String>);
-  
+
   #[restcrab(method = "PUT", uri = "/put", query("test", "value"), query("test2", "value2"))]
   fn static_query();
 
   #[restcrab(method = "DELETE", uri = "/delete", query("test", "value"))]
   fn dynamic_query(#[queries] headers: HashMap<String, String>);
-  
+
   #[restcrab(method = "GET", uri = "/{test}")]
   fn path_parameters(#[parameter] test: &str);
 }
@@ -122,7 +118,7 @@ async fn reqwest_crab() {
   queries.insert("test3".to_string(), "value3".to_string());
   queries.insert("test4".to_string(), "value4".to_string());
   client.dynamic_query(queries).unwrap();
-  
+
   client.path_parameters("parameter").unwrap();
 }
 
