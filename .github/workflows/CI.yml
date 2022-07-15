@@ -29,7 +29,7 @@ jobs:
             ~/.cargo/git/db/
             restcrab/target/
             restcrab_macros/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - run: cargo fmt --check
 
@@ -58,7 +58,7 @@ jobs:
             ~/.cargo/git/db/
             restcrab/target/
             restcrab_macros/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - run: cargo test
 
@@ -83,7 +83,7 @@ jobs:
             ~/.cargo/git/db/
             restcrab/target/
             restcrab_macros/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - run: cargo test
 
@@ -113,7 +113,7 @@ jobs:
             ~/.cargo/git/db/
             restcrab/target/
             restcrab_macros/target/
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - run: cargo test
 
@@ -140,7 +140,7 @@ jobs:
             ~/.cargo/git/db/
             restcrab/target/
             restcrab_macros/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - run: cargo publish --dry-run -p restcrab_macros
 
