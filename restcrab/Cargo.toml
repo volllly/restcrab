@@ -25,7 +25,7 @@ serde_json = { version = "1.0", optional = true }
 [dev-dependencies]
 async-std = { version = "1.12", features = [ "attributes" ] }
 fake = "2.5.0"
-wiremock = "0.5.14"
+wiremock = "0.5.15"
 
 [lib]
 name = "restcrab"
