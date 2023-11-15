@@ -17,7 +17,7 @@ reqwest = [ "reqwest_lib", "serde_json" ]
 [dependencies]
 restcrab_macros = { path = "../restcrab_macros", version = "0.2" }
 serde = "1.0"
-http = "0.2"
+http = "1.0"
 reqwest_lib = { package = "reqwest", version = "0.11", features = [ "blocking" ], optional = true }
 snafu = "0.7"
 serde_json = { version = "1.0", optional = true }
