@@ -24,7 +24,7 @@ serde_json = { version = "1.0", optional = true }
 
 [dev-dependencies]
 async-std = { version = "1.12", features = [ "attributes" ] }
-fake = "2.5.0"
+fake = "2.9.2"
 wiremock = "0.5.22"
 
 [lib]
