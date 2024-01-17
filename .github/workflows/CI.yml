@@ -20,7 +20,7 @@ jobs:
         with:
           components: clippy, rustfmt
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -49,7 +49,7 @@ jobs:
         with:
           target: x86_64-unknown-linux-gnu
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -74,7 +74,7 @@ jobs:
         with:
           target: x86_64-apple-darwin
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -104,7 +104,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -131,7 +131,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
