@@ -147,7 +147,7 @@ jobs:
       - run: cargo publish --dry-run -p restcrab
 
       - name: Create github Release
-        uses: docker://antonyurchenko/git-release:v5
+        uses: docker://antonyurchenko/git-release:v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
