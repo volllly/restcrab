@@ -15,7 +15,7 @@ quote = "1.0"
 syn = "1.0"
 http = "1.0"
 snafu = "0.7"
-regex = "1.8.1"
+regex = "1.10.4"
 
 [dev-dependencies]
 restcrab = { path = "../restcrab", features = [ "reqwest" ] }
